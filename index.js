@@ -14,6 +14,7 @@ app.get('/', (req, res) =>  {
 app.get('/mahasiswa', (req, res) =>  {
     const sql = "SELECT * from mahasiswa"
     db.query(sql, (err, fields) => {
+        if (err) throw err
         response(200, fields, "SUCCESS", res)
     })
     
@@ -22,12 +23,23 @@ app.get('/mahasiswa', (req, res) =>  {
 // :id akan memasukkan nilai id setelah /mahasiswa
 app.get('/mahasiswa/:nim', (req, res) =>  {
     const nim = req.params.nim
-    response(200, "ini data get", `spesifik mahasiswa by id ${nim}`)
+    const sql = `SELECT * FROM mahasiswa WHERE nim = ${nim}`
+    db.query(sql, (err, fields) => {
+        if (err) throw err
+        response(200, fields, "ini data get", res)
+    })
+    
 })
 
 // biasanya insert, tp bisa juga delete dan update data
 app.post('/mahasiswa', (req, res) =>  {
-    response(200, "ini data", "INI POSTING", res)
+    const {nim, nama, alamat} = req.body
+    const sql = `INSERT INTO mahasiswa (nim, nama, alamat) VALUES (${nim}, '${nama}', '${alamat}')`
+    db.query(sql, (err, fields) => {
+        console.log(fields)
+    })
+    res.send("ok")
+    // response(200, "ini data", "INI POSTING", res)
 })
 
 app.put('/mahasiswa', (req, res) =>  {
